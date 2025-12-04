@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from core.decorators import role_required
+from django.contrib.auth.decorators import login_required
+from notices.models import Notice 
 
 def home(request):
     return HttpResponse("Home Page Working!")
@@ -31,9 +33,11 @@ def logout_view(request):
     return redirect("login")
 
 
+@login_required
 @role_required("teacher")
 def teacher_dashboard(request):
-    return render(request, "teacher_dashboard.html")
+    notices = Notice.objects.all().order_by('-created_at')
+    return render(request, "teacher_dashboard.html", {"notices": notices})
 
 @role_required("student")
 def student_dashboard(request):

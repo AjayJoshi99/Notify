@@ -6,9 +6,13 @@ from .form import NoticeForm
 
 @login_required
 def notice_list(request):
-    notices = Notice.objects.all().order_by('-created_at')
-    return render(request, 'notice_list.html', {'notices': notices})
+    notices = Notice.objects.filter(created_by=request.user).order_by('-created_at')
+    return render(request, "notice_list.html", {"notices": notices})
 
+@login_required
+def notice_public(request):
+    notices = Notice.objects.all().order_by('-created_at')
+    return render(request, 'notice_public.html', {'notices': notices})
 
 @login_required
 @role_required("teacher")
@@ -32,9 +36,10 @@ def notice_edit(request, id):
 @login_required
 @role_required("teacher")
 def notice_delete(request, id):
-    if request.user.profile.role != "teacher":
-        return redirect('notice_list')
-
     notice = get_object_or_404(Notice, id=id)
+
+    if notice.created_by != request.user:
+        return HttpResponse("Unauthorized", status=403)
+
     notice.delete()
-    return redirect('notice_list')
+    return redirect("notice_list")
