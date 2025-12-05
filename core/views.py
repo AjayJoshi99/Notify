@@ -32,11 +32,10 @@ def logout_view(request):
     
     return redirect("login")
 
-
 @login_required
 @role_required("teacher")
 def teacher_dashboard(request):
-    notices = Notice.objects.all().order_by('-created_at')
+    notices = Notice.objects.all().order_by('-pinned', '-created_at')
     return render(request, "teacher_dashboard.html", {"notices": notices})
 
 @role_required("student")

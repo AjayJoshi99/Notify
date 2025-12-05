@@ -41,7 +41,19 @@
                         </div>
                     {% endif %}
                     {# -------------------------------------- #}
+                        <span class="badge bg-info text-dark">{{ n.get_category_display }}</span>
 
+                    {% if n.priority == "high" %}
+                        <span class="badge bg-danger">High Priority</span>
+                    {% elif n.priority == "medium" %}
+                        <span class="badge bg-warning text-dark">Medium</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Low</span>
+                    {% endif %}
+
+                    {% if n.pinned %}
+                        <span class="badge bg-primary"><i class="bi bi-pin-angle"></i> Pinned</span>
+                    {% endif %}
                     {% if n.attachment %}
                         <p class="fw-bold mb-2">📎 Attachment:</p>
 

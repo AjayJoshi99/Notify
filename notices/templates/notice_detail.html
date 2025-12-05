@@ -1,0 +1,18 @@
+<h4>Comments</h4>
+<hr>
+
+{% for c in comments %}
+<div class="p-2 border rounded mb-2 bg-light">
+    <strong>{{ c.user.username }}</strong> 
+    <small class="text-muted">{{ c.created_at }}</small>
+    <p class="m-0">{{ c.comment }}</p>
+</div>
+{% empty %}
+<p>No comments yet.</p>
+{% endfor %}
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.comment }}
+    <button class="btn btn-primary mt-2">Add Comment</button>
+</form>

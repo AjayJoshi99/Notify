@@ -3,16 +3,28 @@ from django.contrib.auth.decorators import login_required
 from .models import Notice
 from core.decorators import role_required
 from .form import NoticeForm
+from django.utils import timezone
 
 @login_required
+@role_required("teacher")
 def notice_list(request):
-    notices = Notice.objects.filter(created_by=request.user).order_by('-created_at')
+    notices = (
+        Notice.objects.filter(created_by=request.user)
+        .order_by('-pinned', '-created_at')
+    )
     return render(request, "notice_list.html", {"notices": notices})
 
 @login_required
 def notice_public(request):
-    notices = Notice.objects.all().order_by('-created_at')
+    today = timezone.now().date()
+
+    notices = (
+        Notice.objects.filter(expiry_date__gte=today)  
+        .order_by('-pinned', '-created_at')        
+    )
+
     return render(request, 'notice_public.html', {'notices': notices})
+
 
 @login_required
 @role_required("teacher")
@@ -29,9 +41,23 @@ def notice_create(request):
 
     return render(request, "notice_form.html", {"form": form})
 
+
+@login_required
 @role_required("teacher")
 def notice_edit(request, id):
-    return HttpResponse("Edit page under construction")
+    notice = get_object_or_404(Notice, id=id)
+
+    if notice.created_by != request.user:
+        return HttpResponse("Unauthorized", status=403)
+
+    if request.method == "POST":
+        form = NoticeForm(request.POST, request.FILES, instance=notice)
+        if form.is_valid():
+            form.save()
+            return redirect("notice_list")
+
+    form = NoticeForm(instance=notice)
+    return render(request, "notice_form.html", {"form": form})
 
 @login_required
 @role_required("teacher")
