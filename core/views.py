@@ -38,6 +38,12 @@ def teacher_dashboard(request):
     notices = Notice.objects.all().order_by('-pinned', '-created_at')
     return render(request, "teacher_dashboard.html", {"notices": notices})
 
+@login_required
 @role_required("student")
 def student_dashboard(request):
-    return render(request, "student_dashboard.html")
+    notices = Notice.objects.all().order_by('-created_at')
+
+    return render(request, "student_dashboard.html", {
+        "notices": notices
+    })
+

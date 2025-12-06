@@ -69,3 +69,19 @@ def notice_delete(request, id):
 
     notice.delete()
     return redirect("notice_list")
+
+@login_required
+def notice_save(request, id):
+    notice = get_object_or_404(Notice, id=id)
+    profile = request.user.profile  
+    if profile in notice.saved_by.all():
+        notice.saved_by.remove(profile)  
+    else:
+        notice.saved_by.add(profile)  
+    return redirect("student_dashboard")
+
+@login_required
+def notice_saved_list(request):
+    profile = request.user.profile
+    saved_notices = profile.saved_notices.all()
+    return render(request, "notice_saved.html", {"notices": saved_notices})

@@ -7,4 +7,7 @@ urlpatterns = [
     path("public/", views.notice_public, name="notice_public"),
     path('<int:id>/edit/', views.notice_edit, name='notice_edit'),
     path('<int:id>/delete/', views.notice_delete, name='notice_delete'),
+    path("save/<int:id>/", views.notice_save, name="notice_save"),
+    path('saved/', views.notice_saved_list, name='notice_saved_list'),
+
 ]

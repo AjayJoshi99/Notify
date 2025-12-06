@@ -1,0 +1,63 @@
+<div class="container mt-4">
+    <h2 class="fw-bold mb-4">⭐ Saved Notices</h2>
+
+    {% for n in notices %}
+        <div class="card p-3 mb-3 shadow-sm">
+
+            <!-- Title + Meta -->
+            <h4>{{ n.title }}</h4>
+            <p>{{ n.message }}</p>
+            <p><small class="text-muted">Posted: {{ n.created_at }}</small></p>
+
+            <!-- MEDIA PREVIEW BLOCK -->
+            {% if n.attachment %}
+                {% with file=n.attachment.url|lower %}
+                    <strong>Attachment:</strong><br>
+
+                    <!-- IMAGES -->
+                    {% if ".jpg" in file or ".jpeg" in file or ".png" in file or ".gif" in file %}
+                        <img src="{{ n.attachment.url }}" class="img-fluid mb-2" style="max-width:250px;"><br>
+                        <a href="{{ n.attachment.url }}" download class="btn btn-outline-primary btn-sm">
+                            Download Image
+                        </a>
+
+                    <!-- VIDEOS -->
+                    {% elif ".mp4" in file or ".webm" in file or ".mov" in file %}
+                        <video width="320" controls class="mb-2">
+                            <source src="{{ n.attachment.url }}">
+                        </video><br>
+                        <a href="{{ n.attachment.url }}" download class="btn btn-outline-primary btn-sm">
+                            Download Video
+                        </a>
+
+                    <!-- PDF -->
+                    {% elif ".pdf" in file %}
+                        <a href="{{ n.attachment.url }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                            View PDF
+                        </a>
+                        <a href="{{ n.attachment.url }}" download class="btn btn-outline-primary btn-sm ms-2">
+                            Download PDF
+                        </a>
+
+                    <!-- OTHER -->
+                    {% else %}
+                        <a href="{{ n.attachment.url }}" download class="btn btn-outline-secondary btn-sm">
+                            Download File
+                        </a>
+                    {% endif %}
+
+                {% endwith %}
+            {% endif %}
+
+            <!-- UNSAVE BUTTON -->
+            <a href="{% url 'notice_save' n.id %}" class="btn btn-sm btn-warning mt-2">
+                Remove from Saved ⭐
+            </a>
+
+        </div>
+
+    {% empty %}
+        <p class="text-muted">You haven't saved any notices yet.</p>
+    {% endfor %}
+
+</div>

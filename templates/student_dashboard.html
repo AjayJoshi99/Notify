@@ -2,19 +2,81 @@
 <html>
 <head>
     <title>Student Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+          rel="stylesheet">
 </head>
 <body class="bg-light">
 
 <div class="container mt-4">
-    <h2>Welcome, {{ request.user.username }} (Student)</h2>
 
-    <div class="mt-4">
-        <a class="btn btn-primary" href="/notices/">📢 View Notices</a>
-        <a class="btn btn-secondary" href="#">📁 Study Materials</a>
-        <a class="btn btn-success" href="#">📝 View Attendance</a>
-        <a class="btn btn-danger" href="{% url 'logout' %}">Logout</a>
+    <h2 class="fw-bold">Welcome, {{ request.user.username }} 👨‍🎓</h2>
+
+    <div class="mt-4 mb-4 d-flex gap-3">
+        <a class="btn btn-info" href="/notices/saved/">
+            ⭐ Saved Notices
+        </a>
+
+        <a class="btn btn-danger" href="{% url 'logout' %}">
+            Logout
+        </a>
     </div>
+
+    <hr>
+
+    <h3 class="mb-3">📢 All Notices</h3>
+
+    {% for n in notices %}
+        <div class="card p-3 mb-3 shadow-sm">
+            <div class="d-flex justify-content-between">
+                <h4>{{ n.title }}</h4>
+
+                {% if n in request.user.profile.saved_notices.all %}
+                    <a href="{% url 'notice_save' n.id %}" class="btn btn-sm btn-secondary">
+                        ⭐ Unsave
+                    </a>
+                {% else %}
+                    <a href="{% url 'notice_save' n.id %}" class="btn btn-sm btn-warning">
+                        ⭐ Save
+                    </a>
+                {% endif %}
+            </div>
+
+            <p>{{ n.message }}</p>
+            <p><small class="text-muted">By {{ n.created_by.username }} | {{ n.created_at }}</small></p>
+
+            {% if n.attachment %}
+                {% with file=n.attachment.url|lower %}
+                    <strong>Attachment:</strong><br>
+
+                    {% if ".jpg" in file or ".jpeg" in file or ".png" in file or ".gif" in file %}
+                        <img src="{{ n.attachment.url }}" class="img-fluid mb-2" 
+                             style="max-width:250px;">
+
+                    {% elif ".mp4" in file or ".webm" in file %}
+                        <video width="320" controls class="mb-2">
+                            <source src="{{ n.attachment.url }}">
+                        </video>
+
+                    {% elif ".pdf" in file %}
+                        <a href="{{ n.attachment.url }}" target="_blank" 
+                           class="btn btn-outline-primary btn-sm">
+                            View PDF
+                        </a>
+
+                    {% else %}
+                        <a href="{{ n.attachment.url }}" download 
+                           class="btn btn-outline-secondary btn-sm">
+                            Download File
+                        </a>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
+
+        </div>
+    {% empty %}
+        <p class="text-muted">No notices posted yet.</p>
+    {% endfor %}
+
 </div>
 
 </body>

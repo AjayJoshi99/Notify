@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from core import models as core
 
 class Notice(models.Model):
     CATEGORY_CHOICES = [
@@ -19,6 +20,7 @@ class Notice(models.Model):
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    saved_by = models.ManyToManyField(core.Profile, blank=True, related_name="saved_notices")
 
     attachment = models.FileField(
         upload_to="notices/",
@@ -30,7 +32,8 @@ class Notice(models.Model):
     priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default="medium")
     expiry_date = models.DateField(null=True, blank=True)
     pinned = models.BooleanField(default=False)
-
+   
+    
     def is_expired(self):
         from datetime import date
         return self.expiry_date and self.expiry_date < date.today()
