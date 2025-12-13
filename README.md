@@ -19,6 +19,7 @@ A role-based **Notice Management System** built with **Django** that allows teac
 * Edit & delete **only their own notices**
 * View list of notices created by them
 * View public notices (read-only)
+* Filters to view perticular posts only.
 
 ### 👨‍🎓 Student Features
 
@@ -189,21 +190,13 @@ Media files are stored in `/media/` and served via Django media settings.
 
 ---
 
-## 🔮 Future Enhancements
-
-* Email / WhatsApp notification
-* Search & filters
-* Notice analytics (views count)
-* Comment & reply system
-* Admin approval workflow
-
----
 
 ## 👤 Author
 
 **Ajay Joshi**
-Django | MERN | Competitive Programming | GATE CSE Qualified
+[🔗 LinkedIn](https://www.linkedin.com/in/ajay-joshi-99b752252/)
 
+📧 Email : ajayjoshi1908@gmail.com 
 ---
 
 ## 📜 License
